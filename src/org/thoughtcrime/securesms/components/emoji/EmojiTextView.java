@@ -34,6 +34,7 @@ public class EmojiTextView extends AppCompatTextView {
   private int          maxLength;
   private CharSequence overflowText;
   private CharSequence previousOverflowText;
+  private boolean allEmojis = false;
 
   public EmojiTextView(Context context) {
     this(context, null);
@@ -56,11 +57,17 @@ public class EmojiTextView extends AppCompatTextView {
     a.recycle();
   }
 
+  public boolean isAllEmojis() {
+    return allEmojis;
+  }
+
   @Override public void setText(@Nullable CharSequence text, BufferType type) {
     EmojiProvider             provider   = EmojiProvider.getInstance(getContext());
     EmojiParser.CandidateList candidates = provider.getCandidates(text);
 
+    allEmojis = false;
     if (scaleEmojis && candidates != null && candidates.allEmojis) {
+      allEmojis = true;
       int   emojis = candidates.size();
       float scale  = 1.0f;
 
