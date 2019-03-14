@@ -6,6 +6,7 @@
     <attr name="attachment_document_icon_small" format="reference" />
     <attr name="attachment_document_icon_large" format="reference" />
 
+    <attr name="actionBarStyleConversationList" format="reference" />
     <attr name="conversation_list_item_background" format="reference"/>
     <attr name="conversation_list_item_contact_color" format="reference|color"/>
     <attr name="conversation_list_item_subject_color" format="reference|color"/>
