@@ -26,6 +26,7 @@ public class ConversationTitleView extends RelativeLayout {
   @SuppressWarnings("unused")
   private static final String TAG = ConversationTitleView.class.getSimpleName();
 
+  private Boolean         showSubtitle = false; // ToDo(marcorei): Make styleable via theme
   private View            content;
   private ImageView       back;
   private AvatarImageView avatar;
@@ -54,6 +55,11 @@ public class ConversationTitleView extends RelativeLayout {
     this.verified          = ViewUtil.findById(this, R.id.verified_indicator);
     this.subtitleContainer = ViewUtil.findById(this, R.id.subtitle_container);
     this.avatar            = ViewUtil.findById(this, R.id.contact_photo_image);
+
+    if (!this.showSubtitle) {
+      this.subtitle.setVisibility(View.GONE);
+      this.subtitleContainer.setVisibility(View.GONE);
+    }
 
     ViewUtil.setTextViewGravityStart(this.title, getContext());
     ViewUtil.setTextViewGravityStart(this.subtitle, getContext());
@@ -118,8 +124,10 @@ public class ConversationTitleView extends RelativeLayout {
                                 .map(Recipient::toShortString)
                                 .collect(Collectors.joining(", ")));
 
-    this.subtitle.setVisibility(View.VISIBLE);
-    this.subtitleContainer.setVisibility(VISIBLE);
+    if (this.showSubtitle) {
+      this.subtitle.setVisibility(View.VISIBLE);
+      this.subtitleContainer.setVisibility(VISIBLE);
+    }
   }
 
   private void setSelfTitle() {
@@ -137,7 +145,9 @@ public class ConversationTitleView extends RelativeLayout {
       this.subtitle.setVisibility(View.GONE);
     } else {
       this.subtitle.setText("~" + recipient.getProfileName());
-      this.subtitle.setVisibility(View.VISIBLE);
+      if (this.showSubtitle) {
+        this.subtitle.setVisibility(View.VISIBLE);
+      }
     }
   }
 
@@ -147,7 +157,9 @@ public class ConversationTitleView extends RelativeLayout {
     if (recipient.getCustomLabel() != null) this.subtitle.setText(recipient.getCustomLabel());
     else                                    this.subtitle.setText(recipient.getAddress().serialize());
 
-    this.subtitle.setVisibility(View.VISIBLE);
-    this.subtitleContainer.setVisibility(VISIBLE);
+    if (this.showSubtitle) {
+      this.subtitle.setVisibility(View.VISIBLE);
+      this.subtitleContainer.setVisibility(VISIBLE);
+    }
   }
 }
