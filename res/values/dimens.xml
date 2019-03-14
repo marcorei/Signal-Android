@@ -29,15 +29,15 @@
     <dimen name="album_5_cell_size_big">104dp</dimen>
     <dimen name="album_5_cell_size_small">69dp</dimen>
 
-    <dimen name="message_corner_radius">16dp</dimen>
-    <dimen name="message_corner_collapse_radius">4dp</dimen>
+    <dimen name="message_corner_radius">20dp</dimen>
+    <dimen name="message_corner_collapse_radius">20dp</dimen>
     <dimen name="message_bubble_corner_radius">2dp</dimen>
     <dimen name="message_bubble_shadow_distance">1.5dp</dimen>
-    <dimen name="message_bubble_horizontal_padding">12dp</dimen>
-    <dimen name="message_bubble_top_padding">6dp</dimen>
-    <dimen name="message_bubble_collapsed_footer_padding">6dp</dimen>
-    <dimen name="message_bubble_edge_margin">32dp</dimen>
-    <dimen name="message_bubble_bottom_padding">8dp</dimen>
+    <dimen name="message_bubble_horizontal_padding">15dp</dimen>
+    <dimen name="message_bubble_top_padding">9dp</dimen>
+    <dimen name="message_bubble_collapsed_footer_padding">11dp</dimen>
+    <dimen name="message_bubble_edge_margin">10dp</dimen>
+    <dimen name="message_bubble_bottom_padding">16dp</dimen>
     <dimen name="media_bubble_remove_button_size">24dp</dimen>
     <dimen name="media_bubble_edit_button_size">24dp</dimen>
     <dimen name="media_bubble_default_dimens">210dp</dimen>
@@ -53,17 +53,17 @@
 
     <dimen name="thumbnail_default_radius">4dp</dimen>
 
-    <dimen name="conversation_compose_height">40dp</dimen>
+    <dimen name="conversation_compose_height">44dp</dimen>
     <dimen name="conversation_individual_right_gutter">16dp</dimen>
     <dimen name="conversation_individual_left_gutter">16dp</dimen>
     <dimen name="conversation_group_left_gutter">52dp</dimen>
     <dimen name="conversation_vertical_message_spacing_default">8dp</dimen>
     <dimen name="conversation_vertical_message_spacing_collapse">1dp</dimen>
 
-    <dimen name="conversation_item_avatar_size">36dp</dimen>
+    <dimen name="conversation_item_avatar_size">38dp</dimen>
 
-    <dimen name="quote_corner_radius_large">10dp</dimen>
-    <dimen name="quote_corner_radius_bottom">4dp</dimen>
+    <dimen name="quote_corner_radius_large">12dp</dimen>
+    <dimen name="quote_corner_radius_bottom">12dp</dimen>
     <dimen name="quote_corner_radius_preview">18dp</dimen>
 
     <integer name="media_overview_cols">3</integer>
@@ -98,5 +98,7 @@
     <dimen name="floating_action_button_margin">16dp</dimen>
 
     <dimen name="alertview_small_icon_size">14dp</dimen>
+
+    <dimen name="conversation_list_spacing">2dp</dimen>
 
 </resources>
