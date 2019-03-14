@@ -79,8 +79,8 @@
                         android:layout_gravity="bottom"
                         android:paddingLeft="4dp"
                         android:paddingStart="4dp"
-                        android:paddingRight="6dp"
-                        android:paddingEnd="6dp"
+                        android:paddingRight="2dp"
+                        android:paddingEnd="2dp"
                         android:background="?selectableItemBackgroundBorderless"
                         android:contentDescription="@string/conversation_activity__emoji_toggle_description" />
 
@@ -91,6 +91,8 @@
                     <org.thoughtcrime.securesms.components.ComposeText
                         style="@style/ComposeEditText"
                         android:id="@+id/embedded_text_editor"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -98,6 +100,7 @@
                         android:nextFocusForward="@+id/send_button"
                         android:nextFocusRight="@+id/send_button"
                         tools:visibility="invisible"
+                        android:textColor="@color/core_black"
                         tools:hint="Send TextSecure message" >
                         <requestFocus />
                     </org.thoughtcrime.securesms.components.ComposeText>
