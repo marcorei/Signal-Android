@@ -9,9 +9,8 @@
             android:id="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="2dp"
+            android:paddingBottom="60dp"
             android:scrollbars="vertical"
-            android:cacheColorHint="?conversation_background"
             android:clipChildren="false"
             android:clipToPadding="false"/>
 
@@ -47,8 +46,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginRight="14dp"
+            android:layout_marginBottom="65dp"
             android:padding="5dp"
             android:layout_gravity="bottom|end"
             android:background="@drawable/circle_tintable"
