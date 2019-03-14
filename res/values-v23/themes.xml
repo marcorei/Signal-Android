@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="TextSecure.LightRegistrationTheme" parent="TextSecure.LightNoActionBar">
+    <style name="TextSecure.HighlightTheme" parent="TextSecure.HighlightThemeBase">
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:statusBarColor">@color/core_grey_02</item>
+        <item name="android:statusBarColor">@color/gray3</item>
+    </style>
+    <style name="TextSecure.LightTheme" parent="TextSecure.LightThemeBase">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/gray3</item>
     </style>
 
+    <style name="TextSecure.LightRegistrationTheme" parent="TextSecure.LightNoActionBar">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/white</item>
+    </style>
     <style name="TextSecure.DarkRegistrationTheme" parent="TextSecure.DarkNoActionBar">
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:statusBarColor">@color/core_black</item>
+    </style>
+
+    <style name="ConversationActionBarTheme">
+        <item name="android:colorControlNormal">@color/core_grey_85</item>
+    </style>
+
+    <style name="TextSecure.LightThemeConversation" parent="TextSecure.LightThemeBase">
+        <item name="colorPrimary">@color/core_grey_85</item>
+        <item name="colorPrimaryDark">@color/allo_blue</item>
+        <item name="colorAccent">@color/allo_blue</item>
+        <item name="colorControlActivated">@color/allo_blue</item>
+        <item name="colorControlHighlight">@color/allo_blue</item>
+        <item name="fab_color">@color/allo_blue</item>
+        <item name="pref_icon_tint">@color/allo_blue</item>
+        <item name="actionBarTheme">@style/ConversationActionBarTheme</item>
     </style>
 </resources>
