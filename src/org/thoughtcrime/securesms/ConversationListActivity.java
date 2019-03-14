@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.TooltipCompat;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -66,7 +67,8 @@ import org.whispersystems.libsignal.util.guava.Optional;
 import java.util.List;
 
 public class ConversationListActivity extends PassphraseRequiredActionBarActivity
-    implements ConversationListFragment.ConversationSelectedListener
+    implements ConversationListFragment.ConversationSelectedListener,
+        ConversationListFragment.OnConversationListScrollListener
 {
   @SuppressWarnings("unused")
   private static final String TAG = ConversationListActivity.class.getSimpleName();
@@ -79,6 +81,7 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
   private SearchToolbar            searchToolbar;
   private ImageView                searchAction;
   private ViewGroup                fragmentContainer;
+  private Toolbar                  toolbar;
 
   @Override
   protected void onPreCreate() {
@@ -90,12 +93,12 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
   protected void onCreate(Bundle icicle, boolean ready) {
     setContentView(R.layout.conversation_list_activity);
 
-    Toolbar toolbar = findViewById(R.id.toolbar);
+    toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    searchToolbar            = findViewById(R.id.search_toolbar);
-    searchAction             = findViewById(R.id.search_action);
-    fragmentContainer        = findViewById(R.id.fragment_container);
+    searchToolbar = findViewById(R.id.search_toolbar);
+    searchAction = findViewById(R.id.search_action);
+    fragmentContainer = findViewById(R.id.fragment_container);
     conversationListFragment = initFragment(R.id.fragment_container, new ConversationListFragment(), dynamicLanguage.getCurrentLocale());
 
     initializeSearchListener();
@@ -219,6 +222,21 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
   @Override
   public void onCreateConversation(long threadId, Recipient recipient, int distributionType, long lastSeen) {
     openConversation(threadId, recipient, distributionType, lastSeen, -1);
+  }
+
+  @Override
+  public void onConversationListScrolled(boolean isInTopPosition) {
+    if (isInTopPosition) {
+      toolbar.setElevation(0);
+    } else {
+      float pxElevationValue = TypedValue.applyDimension(
+              TypedValue.COMPLEX_UNIT_DIP,
+              4,
+              getResources().getDisplayMetrics()
+      );
+
+      toolbar.setElevation(pxElevationValue);
+    }
   }
 
   public void openConversation(long threadId, Recipient recipient, int distributionType, long lastSeen, int startingPosition) {
