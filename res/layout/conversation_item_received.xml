@@ -6,7 +6,7 @@
     android:id="@+id/conversation_item"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:background="@drawable/conversation_item_background"
     android:focusable="true"
     android:nextFocusLeft="@+id/container"
@@ -16,14 +16,15 @@
 
     <RelativeLayout
         android:id="@+id/container"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/conversation_individual_right_gutter"
         android:layout_marginEnd="@dimen/conversation_individual_right_gutter"
         android:paddingLeft="8dp"
         android:paddingStart="8dp"
         android:clipToPadding="false"
-        android:clipChildren="false">
+        android:clipChildren="false"
+        android:layout_weight="0.86">
 
         <FrameLayout
             android:id="@+id/contact_photo_container"
@@ -209,4 +210,10 @@
             android:gravity="center_vertical"/>
 
     </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="0.14">
+    </FrameLayout>
 </org.thoughtcrime.securesms.conversation.ConversationItem>

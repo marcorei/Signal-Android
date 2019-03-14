@@ -14,14 +14,21 @@
     android:clipToPadding="false"
     android:clipChildren="false">
 
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="0.14">
+    </FrameLayout>
+
     <RelativeLayout
         android:id="@+id/container"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/conversation_individual_right_gutter"
         android:layout_marginEnd="@dimen/conversation_individual_right_gutter"
         android:clipToPadding="false"
-        android:clipChildren="false">
+        android:clipChildren="false"
+        android:layout_weight="0.86">
 
         <LinearLayout
             android:id="@+id/body_bubble"
