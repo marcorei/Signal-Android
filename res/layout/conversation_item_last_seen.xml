@@ -8,14 +8,6 @@
     android:paddingTop="24dp"
     android:paddingBottom="20dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_marginLeft="28dp"
-        android:layout_marginRight="28dp"
-        android:layout_marginBottom="3dp"
-        android:background="?attr/conversation_item_last_seen_line_color" />
-
     <TextView
         android:id="@+id/text"
         android:layout_width="wrap_content"
