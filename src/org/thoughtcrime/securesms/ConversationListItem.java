@@ -312,7 +312,7 @@ public class ConversationListItem extends RelativeLayout
   private void setRippleColor(Recipient recipient) {
     if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
       ((RippleDrawable)(getBackground()).mutate())
-          .setColor(ColorStateList.valueOf(recipient.getColor().toConversationColor(getContext())));
+        .setColor(ColorStateList.valueOf(getResources().getColor(R.color.gray20)));
     }
   }
 
