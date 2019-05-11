@@ -385,7 +385,7 @@ public class ConversationItem extends LinearLayout
   }
 
   private boolean isCaptionlessMms(MessageRecord messageRecord) {
-    return TextUtils.isEmpty(messageRecord.getDisplayBody()) && messageRecord.isMms() && ((MmsMessageRecord) messageRecord).getSlideDeck().getTextSlide() == null;
+    return TextUtils.isEmpty(messageRecord.getDisplayBody(getContext())) && messageRecord.isMms() && ((MmsMessageRecord) messageRecord).getSlideDeck().getTextSlide() == null;
   }
 
   private boolean hasAudio(MessageRecord messageRecord) {
@@ -431,7 +431,7 @@ public class ConversationItem extends LinearLayout
     if (isCaptionlessMms(messageRecord)) {
       bodyText.setVisibility(View.GONE);
     } else {
-      Spannable styledText = linkifyMessageBody(messageRecord.getDisplayBody(), batchSelected.isEmpty());
+      Spannable styledText = linkifyMessageBody(messageRecord.getDisplayBody(getContext()), batchSelected.isEmpty());
       styledText = SearchUtil.getHighlightedSpan(locale, () -> new BackgroundColorSpan(Color.YELLOW), styledText, searchQuery);
       styledText = SearchUtil.getHighlightedSpan(locale, () -> new ForegroundColorSpan(Color.BLACK), styledText, searchQuery);
 
@@ -556,7 +556,7 @@ public class ConversationItem extends LinearLayout
       mediaThumbnailStub.get().setDownloadClickListener(downloadClickListener);
       mediaThumbnailStub.get().setOnLongClickListener(passthroughClickListener);
       mediaThumbnailStub.get().setOnClickListener(passthroughClickListener);
-      mediaThumbnailStub.get().showShade(TextUtils.isEmpty(messageRecord.getDisplayBody()) && !hasExtraText(messageRecord));
+      mediaThumbnailStub.get().showShade(TextUtils.isEmpty(messageRecord.getDisplayBody(getContext())) && !hasExtraText(messageRecord));
       mediaThumbnailStub.get().setConversationColor(messageRecord.isOutgoing() ? defaultBubbleColor
                                                                                : messageRecord.getRecipient().getColor().toConversationColor(context));
 
@@ -618,7 +618,7 @@ public class ConversationItem extends LinearLayout
       }
     }
 
-    if (!TextUtils.isEmpty(current.getDisplayBody())) {
+    if (!TextUtils.isEmpty(current.getDisplayBody(getContext()))) {
       bottomLeft  = 0;
       bottomRight = 0;
     }
@@ -780,7 +780,7 @@ public class ConversationItem extends LinearLayout
   private ConversationItemFooter getActiveFooter(@NonNull MessageRecord messageRecord) {
     if (hasSharedContact(messageRecord)) {
       return sharedContactStub.get().getFooter();
-    } else if (hasOnlyThumbnail(messageRecord) && TextUtils.isEmpty(messageRecord.getDisplayBody())) {
+    } else if (hasOnlyThumbnail(messageRecord) && TextUtils.isEmpty(messageRecord.getDisplayBody(getContext()))) {
       return mediaThumbnailStub.get().getFooter();
     } else {
       return footer;
@@ -1036,7 +1036,7 @@ public class ConversationItem extends LinearLayout
         Log.i(TAG, "Scheduling MMS attachment download");
         ApplicationContext.getInstance(context)
                           .getJobManager()
-                          .add(new MmsDownloadJob(context, messageRecord.getId(),
+                          .add(new MmsDownloadJob(messageRecord.getId(),
                                                   messageRecord.getThreadId(), false));
       } else {
         Log.i(TAG, "Scheduling push attachment downloads for " + slides.size() + " items");
@@ -1044,7 +1044,7 @@ public class ConversationItem extends LinearLayout
         for (Slide slide : slides) {
           ApplicationContext.getInstance(context)
                             .getJobManager()
-                            .add(new AttachmentDownloadJob(context, messageRecord.getId(),
+                            .add(new AttachmentDownloadJob(messageRecord.getId(),
                                                            ((DatabaseAttachment)slide.asAttachment()).getAttachmentId(), true));
         }
       }
@@ -1164,7 +1164,7 @@ public class ConversationItem extends LinearLayout
 
         ApplicationContext.getInstance(context)
                           .getJobManager()
-                          .add(new MmsSendJob(context, messageRecord.getId()));
+                          .add(new MmsSendJob(messageRecord.getId()));
       } else {
         SmsDatabase database = DatabaseFactory.getSmsDatabase(context);
         database.markAsInsecure(messageRecord.getId());
