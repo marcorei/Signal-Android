@@ -28,6 +28,7 @@ import android.net.Uri;
 import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -42,20 +43,6 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
-
-import org.thoughtcrime.securesms.ApplicationContext;
-import org.thoughtcrime.securesms.BindableConversationItem;
-import org.thoughtcrime.securesms.ConfirmIdentityDialog;
-import org.thoughtcrime.securesms.MediaPreviewActivity;
-import org.thoughtcrime.securesms.MessageDetailsActivity;
-import org.thoughtcrime.securesms.R;
-import org.thoughtcrime.securesms.attachments.Attachment;
-import org.thoughtcrime.securesms.components.LinkPreviewView;
-import org.thoughtcrime.securesms.components.emoji.EmojiTextView;
-import org.thoughtcrime.securesms.database.AttachmentDatabase;
-import org.thoughtcrime.securesms.linkpreview.LinkPreview;
-import org.thoughtcrime.securesms.linkpreview.LinkPreviewUtil;
-import org.thoughtcrime.securesms.logging.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +52,13 @@ import android.widget.Toast;
 
 import com.annimon.stream.Stream;
 
+import org.thoughtcrime.securesms.ApplicationContext;
+import org.thoughtcrime.securesms.BindableConversationItem;
+import org.thoughtcrime.securesms.ConfirmIdentityDialog;
+import org.thoughtcrime.securesms.MediaPreviewActivity;
+import org.thoughtcrime.securesms.MessageDetailsActivity;
+import org.thoughtcrime.securesms.R;
+import org.thoughtcrime.securesms.attachments.Attachment;
 import org.thoughtcrime.securesms.attachments.DatabaseAttachment;
 import org.thoughtcrime.securesms.components.AlertView;
 import org.thoughtcrime.securesms.components.AudioView;
@@ -72,9 +66,12 @@ import org.thoughtcrime.securesms.components.AvatarImageView;
 import org.thoughtcrime.securesms.components.ConversationItemFooter;
 import org.thoughtcrime.securesms.components.ConversationItemThumbnail;
 import org.thoughtcrime.securesms.components.DocumentView;
+import org.thoughtcrime.securesms.components.LinkPreviewView;
 import org.thoughtcrime.securesms.components.QuoteView;
 import org.thoughtcrime.securesms.components.SharedContactView;
+import org.thoughtcrime.securesms.components.emoji.EmojiTextView;
 import org.thoughtcrime.securesms.contactshare.Contact;
+import org.thoughtcrime.securesms.database.AttachmentDatabase;
 import org.thoughtcrime.securesms.database.DatabaseFactory;
 import org.thoughtcrime.securesms.database.MmsDatabase;
 import org.thoughtcrime.securesms.database.MmsSmsDatabase;
@@ -88,6 +85,9 @@ import org.thoughtcrime.securesms.jobs.AttachmentDownloadJob;
 import org.thoughtcrime.securesms.jobs.MmsDownloadJob;
 import org.thoughtcrime.securesms.jobs.MmsSendJob;
 import org.thoughtcrime.securesms.jobs.SmsSendJob;
+import org.thoughtcrime.securesms.linkpreview.LinkPreview;
+import org.thoughtcrime.securesms.linkpreview.LinkPreviewUtil;
+import org.thoughtcrime.securesms.logging.Log;
 import org.thoughtcrime.securesms.mms.GlideRequests;
 import org.thoughtcrime.securesms.mms.ImageSlide;
 import org.thoughtcrime.securesms.mms.PartAuthority;
@@ -276,14 +276,6 @@ public class ConversationItem extends LinearLayout
       }
     }
 
-    ConversationItemFooter activeFooter   = getActiveFooter(messageRecord);
-    int                    availableWidth = getAvailableMessageBubbleWidth(footer);
-
-    if (activeFooter.getVisibility() != GONE && activeFooter.getMeasuredWidth() != availableWidth) {
-      activeFooter.getLayoutParams().width = availableWidth;
-      needsMeasure = true;
-    }
-
     if (needsMeasure) {
       if (measureCalls < MAX_MEASURE_CALLS) {
         measureCalls++;
@@ -336,7 +328,13 @@ public class ConversationItem extends LinearLayout
     if (messageRecord.isOutgoing()) {
       bodyBubble.getBackground().setColorFilter(defaultBubbleColor, PorterDuff.Mode.MULTIPLY);
     } else {
-      bodyBubble.getBackground().setColorFilter(messageRecord.getRecipient().getColor().toConversationColor(context), PorterDuff.Mode.MULTIPLY);
+      int inComingColor = ContextCompat.getColor(getContext(), R.color.allo_red);
+      bodyBubble.getBackground().setColorFilter(inComingColor, PorterDuff.Mode.MULTIPLY);
+    }
+
+    if (bodyText.isAllEmojis()) {
+      int transparentColor = ContextCompat.getColor(getContext(), R.color.transparent);
+      bodyBubble.getBackground().setColorFilter(transparentColor, PorterDuff.Mode.MULTIPLY);
     }
 
     if (audioViewStub.resolved()) {
@@ -625,11 +623,6 @@ public class ConversationItem extends LinearLayout
       bottomRight = 0;
     }
 
-    if (isStartOfMessageCluster(current, previous, isGroupThread) && !current.isOutgoing() && isGroupThread) {
-      topLeft  = 0;
-      topRight = 0;
-    }
-
     if (hasQuote(messageRecord)) {
       topLeft  = 0;
       topRight = 0;
@@ -773,7 +766,7 @@ public class ConversationItem extends LinearLayout
     if (sharedContactStub.resolved())  sharedContactStub.get().getFooter().setVisibility(GONE);
     if (mediaThumbnailStub.resolved()) mediaThumbnailStub.get().getFooter().setVisibility(GONE);
 
-    boolean differentTimestamps = next.isPresent() && !DateUtils.isSameExtendedRelativeTimestamp(context, locale, next.get().getTimestamp(), current.getTimestamp());
+    boolean differentTimestamps = next.isPresent() && next.get().getTimestamp() > current.getTimestamp() + (1000 * 60 * 60);
 
     if (current.getExpiresIn() > 0 || !current.isSecure() || current.isPending() || current.isPendingInsecureSmsFallback() ||
         current.isFailed() || differentTimestamps || isEndOfMessageCluster(current, next, isGroupThread))

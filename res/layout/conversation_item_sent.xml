@@ -14,14 +14,21 @@
     android:clipToPadding="false"
     android:clipChildren="false">
 
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="0.14">
+    </FrameLayout>
+
     <RelativeLayout
         android:id="@+id/container"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/conversation_individual_right_gutter"
         android:layout_marginEnd="@dimen/conversation_individual_right_gutter"
         android:clipToPadding="false"
-        android:clipChildren="false">
+        android:clipChildren="false"
+        android:layout_weight="0.86">
 
         <LinearLayout
             android:id="@+id/body_bubble"
@@ -125,20 +132,24 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
-            <org.thoughtcrime.securesms.components.ConversationItemFooter
-                android:id="@+id/conversation_item_footer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="-4dp"
-                android:layout_marginLeft="@dimen/message_bubble_horizontal_padding"
-                android:layout_marginRight="@dimen/message_bubble_horizontal_padding"
-                android:layout_marginBottom="@dimen/message_bubble_bottom_padding"
-                android:clipChildren="false"
-                android:clipToPadding="false"
-                app:footer_text_color="?attr/conversation_item_sent_text_secondary_color"
-                app:footer_icon_color="?attr/conversation_item_sent_icon_color"/>
-
         </LinearLayout>
+
+        <org.thoughtcrime.securesms.components.ConversationItemFooter
+            android:id="@+id/conversation_item_footer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="@dimen/message_bubble_horizontal_padding"
+            android:layout_marginRight="@dimen/message_bubble_horizontal_padding"
+            android:layout_marginBottom="@dimen/message_bubble_bottom_padding"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:footer_text_color="?attr/conversation_item_sent_text_secondary_color"
+            app:footer_icon_color="?attr/conversation_item_sent_icon_color"
+            android:layout_below="@id/body_bubble"
+            android:layout_alignRight="@id/body_bubble"
+            android:layout_alignEnd="@id/body_bubble"
+            />
 
         <org.thoughtcrime.securesms.components.AlertView
             android:id="@+id/indicators_parent"

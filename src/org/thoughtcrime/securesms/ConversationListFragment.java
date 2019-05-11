@@ -145,6 +145,8 @@ public class ConversationListFragment extends Fragment
     list.setHasFixedSize(true);
     list.setLayoutManager(new LinearLayoutManager(getActivity()));
     list.setItemAnimator(new DeleteItemAnimator());
+    list.addOnScrollListener(new OnScrollListener());
+    list.addItemDecoration(new ConversationListItemDecoration());
 
     new ItemTouchHelper(new ArchiveListenerCallback()).attachToRecyclerView(list);
 
@@ -424,7 +426,7 @@ public class ConversationListFragment extends Fragment
   public interface ConversationSelectedListener {
     void onCreateConversation(long threadId, Recipient recipient, int distributionType, long lastSeen);
     void onSwitchToArchive();
-}
+  }
 
   @Override
   public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -595,6 +597,30 @@ public class ConversationListFragment extends Fragment
       } else {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
       }
+    }
+  }
+
+  public interface OnConversationListScrollListener {
+    void onConversationListScrolled(boolean isInTopPosition);
+  }
+
+  private class OnScrollListener extends RecyclerView.OnScrollListener {
+    @Override
+    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+      super.onScrolled(recyclerView, dx, dy);
+      OnConversationListScrollListener listener = (OnConversationListScrollListener) getActivity();
+      if (listener != null) {
+        listener.onConversationListScrolled(recyclerView.getScrollY() == 0);
+      }
+    }
+  }
+
+  private class ConversationListItemDecoration extends RecyclerView.ItemDecoration {
+    @Override
+    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+      int spacing = Math.round(getResources().getDimension(R.dimen.conversation_list_spacing));
+      outRect.top = spacing;
+      outRect.bottom = spacing;
     }
   }
 }

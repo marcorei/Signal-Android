@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.AppCompatTextView;
+import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -34,6 +35,7 @@ public class EmojiTextView extends AppCompatTextView {
   private int          maxLength;
   private CharSequence overflowText;
   private CharSequence previousOverflowText;
+  private boolean allEmojis = false;
 
   public EmojiTextView(Context context) {
     this(context, null);
@@ -56,11 +58,43 @@ public class EmojiTextView extends AppCompatTextView {
     a.recycle();
   }
 
+  public boolean isAllEmojis() {
+    return allEmojis;
+  }
+
+  @Override
+  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    // Measure solution from
+    // https://stackoverflow.com/questions/9749200/prevent-a-multiline-textview-from-unnecessarily-expanding-to-its-maximum-width/13203635
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+    Layout layout = getLayout();
+    if (layout != null) {
+      int width = (int) Math.ceil(getMaxLineWidth(layout))
+              + getCompoundPaddingLeft() + getCompoundPaddingRight();
+      int height = getMeasuredHeight();
+      setMeasuredDimension(width, height);
+    }
+  }
+
+  private float getMaxLineWidth(Layout layout) {
+    float max_width = 0.0f;
+    int lines = layout.getLineCount();
+    for (int i = 0; i < lines; i++) {
+      if (layout.getLineWidth(i) > max_width) {
+        max_width = layout.getLineWidth(i);
+      }
+    }
+    return max_width;
+  }
+
   @Override public void setText(@Nullable CharSequence text, BufferType type) {
     EmojiProvider             provider   = EmojiProvider.getInstance(getContext());
     EmojiParser.CandidateList candidates = provider.getCandidates(text);
 
+    allEmojis = false;
     if (scaleEmojis && candidates != null && candidates.allEmojis) {
+      allEmojis = true;
       int   emojis = candidates.size();
       float scale  = 1.0f;
 

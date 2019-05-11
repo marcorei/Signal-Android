@@ -44,6 +44,7 @@ import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.pm.ShortcutInfoCompat;
 import android.support.v4.content.pm.ShortcutManagerCompat;
 import android.support.v4.graphics.drawable.IconCompat;
@@ -144,15 +145,15 @@ import org.thoughtcrime.securesms.database.model.MessageRecord;
 import org.thoughtcrime.securesms.database.model.MmsMessageRecord;
 import org.thoughtcrime.securesms.events.ReminderUpdateEvent;
 import org.thoughtcrime.securesms.giph.ui.GiphyActivity;
-import org.thoughtcrime.securesms.linkpreview.LinkPreview;
-import org.thoughtcrime.securesms.linkpreview.LinkPreviewRepository;
-import org.thoughtcrime.securesms.linkpreview.LinkPreviewViewModel;
-import org.thoughtcrime.securesms.mediasend.MediaSendActivity;
-import org.thoughtcrime.securesms.mediasend.Media;
 import org.thoughtcrime.securesms.jobs.MultiDeviceBlockedUpdateJob;
 import org.thoughtcrime.securesms.jobs.RetrieveProfileJob;
 import org.thoughtcrime.securesms.jobs.ServiceOutageDetectionJob;
+import org.thoughtcrime.securesms.linkpreview.LinkPreview;
+import org.thoughtcrime.securesms.linkpreview.LinkPreviewRepository;
+import org.thoughtcrime.securesms.linkpreview.LinkPreviewViewModel;
 import org.thoughtcrime.securesms.logging.Log;
+import org.thoughtcrime.securesms.mediasend.Media;
+import org.thoughtcrime.securesms.mediasend.MediaSendActivity;
 import org.thoughtcrime.securesms.mms.AttachmentManager;
 import org.thoughtcrime.securesms.mms.AttachmentManager.MediaType;
 import org.thoughtcrime.securesms.mms.AudioSlide;
@@ -194,6 +195,7 @@ import org.thoughtcrime.securesms.util.CharacterCalculator.CharacterState;
 import org.thoughtcrime.securesms.util.CommunicationActions;
 import org.thoughtcrime.securesms.util.Dialogs;
 import org.thoughtcrime.securesms.util.DirectoryHelper;
+import org.thoughtcrime.securesms.util.DynamicConversationTheme;
 import org.thoughtcrime.securesms.util.DynamicLanguage;
 import org.thoughtcrime.securesms.util.DynamicTheme;
 import org.thoughtcrime.securesms.util.ExpirationUtil;
@@ -314,7 +316,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private boolean    isSecurityInitialized = false;
 
   private final IdentityRecordList identityRecords = new IdentityRecordList();
-  private final DynamicTheme       dynamicTheme    = new DynamicTheme();
+  private final DynamicTheme       dynamicTheme    = new DynamicConversationTheme();
   private final DynamicLanguage    dynamicLanguage = new DynamicLanguage();
 
   @Override
@@ -422,6 +424,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
 
     titleView.setTitle(glideRequests, recipient);
     setActionBarColor(recipient.getColor());
+
     setBlockedUserState(recipient, isSecureText, isDefaultSms);
     setGroupShareProfileReminder(recipient);
     calculateCharactersRemaining();
@@ -1555,7 +1558,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       calculateCharactersRemaining();
       updateLinkPreviewState();
       composeText.setTransport(newTransport);
-      buttonToggle.getBackground().setColorFilter(newTransport.getBackgroundColor(), Mode.MULTIPLY);
+      buttonToggle.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.core_grey_60), Mode.MULTIPLY);
       buttonToggle.getBackground().invalidateSelf();
       if (manuallySelected) recordSubscriptionIdPreference(newTransport.getSimSubscriptionId());
     });
@@ -1681,7 +1684,6 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       titleView.setTitle(glideRequests, recipient);
       titleView.setVerified(identityRecords.isVerified());
       setBlockedUserState(recipient, isSecureText, isDefaultSms);
-      setActionBarColor(recipient.getColor());
       setGroupShareProfileReminder(recipient);
       updateReminders(recipient.hasSeenInviteReminder());
       updateDefaultSubscriptionId(recipient.getDefaultSubscriptionId());
@@ -1864,8 +1866,9 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private void setActionBarColor(MaterialColor color) {
     ActionBar supportActionBar = getSupportActionBar();
     if (supportActionBar == null) throw new AssertionError();
-    supportActionBar.setBackgroundDrawable(new ColorDrawable(color.toActionBarColor(this)));
-    setStatusBarColor(color.toStatusBarColor(this));
+    int white = ContextCompat.getColor(this, R.color.white);
+    supportActionBar.setBackgroundDrawable(new ColorDrawable(white));
+    setStatusBarColor(white);
   }
 
   private void setBlockedUserState(Recipient recipient, boolean isSecureText, boolean isDefaultSms) {
