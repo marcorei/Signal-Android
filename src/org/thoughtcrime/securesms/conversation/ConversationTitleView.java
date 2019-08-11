@@ -28,7 +28,6 @@ public class ConversationTitleView extends RelativeLayout {
 
   private Boolean         showSubtitle = false; // ToDo(marcorei): Make styleable via theme
   private View            content;
-  private ImageView       back;
   private AvatarImageView avatar;
   private TextView        title;
   private TextView        subtitle;
@@ -48,7 +47,6 @@ public class ConversationTitleView extends RelativeLayout {
   public void onFinishInflate() {
     super.onFinishInflate();
 
-    this.back              = ViewUtil.findById(this, R.id.up_button);
     this.content           = ViewUtil.findById(this, R.id.content);
     this.title             = ViewUtil.findById(this, R.id.title);
     this.subtitle          = ViewUtil.findById(this, R.id.subtitle);
@@ -96,10 +94,6 @@ public class ConversationTitleView extends RelativeLayout {
   public void setOnLongClickListener(@Nullable OnLongClickListener listener) {
     this.content.setOnLongClickListener(listener);
     this.avatar.setOnLongClickListener(listener);
-  }
-
-  public void setOnBackClickedListener(@Nullable OnClickListener listener) {
-    this.back.setOnClickListener(listener);
   }
 
   private void setComposeTitle() {

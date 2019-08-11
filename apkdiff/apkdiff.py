@@ -4,8 +4,9 @@ import sys
 from zipfile import ZipFile
 
 class ApkDiff:
-
-    IGNORE_FILES = ["META-INF/MANIFEST.MF", "META-INF/SIGNAL_S.RSA", "META-INF/SIGNAL_S.SF"]
+    # resources.arsc is ignored due to https://issuetracker.google.com/issues/110237303
+    # May be fixed in Android Gradle Plugin 3.4
+    IGNORE_FILES = ["META-INF/MANIFEST.MF", "META-INF/SIGNAL_S.RSA", "META-INF/SIGNAL_S.SF", "resources.arsc"]
 
     def compare(self, sourceApk, destinationApk):
         sourceZip      = ZipFile(sourceApk, 'r')
@@ -35,10 +36,10 @@ class ApkDiff:
         return True
 
     def compareEntries(self, sourceZip, destinationZip):
-        sourceInfoList      = filter(lambda sourceInfo: sourceInfo.filename not in self.IGNORE_FILES, sourceZip.infolist())
-        destinationInfoList = filter(lambda destinationInfo: destinationInfo.filename not in self.IGNORE_FILES, destinationZip.infolist())
+        sourceInfoList      = list(filter(lambda sourceInfo: sourceInfo.filename not in self.IGNORE_FILES, sourceZip.infolist()))
+        destinationInfoList = list(filter(lambda destinationInfo: destinationInfo.filename not in self.IGNORE_FILES, destinationZip.infolist()))
 
-        if len(list(sourceInfoList)) != len(list(destinationInfoList)):
+        if len(sourceInfoList) != len(destinationInfoList):
             print("APK info lists of different length!")
             return False
 
@@ -61,7 +62,7 @@ class ApkDiff:
         sourceChunk      = sourceFile.read(1024)
         destinationChunk = destinationFile.read(1024)
 
-        while sourceChunk != "" or destinationChunk != "":
+        while sourceChunk != b"" or destinationChunk != b"":
             if sourceChunk != destinationChunk:
                 return False
 
