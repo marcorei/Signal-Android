@@ -2,6 +2,7 @@
 <org.thoughtcrime.securesms.conversation.ConversationTitleView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/conversation_title_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -26,7 +27,7 @@
             android:foreground="@drawable/contact_photo_background"
             android:layout_width="34dp"
             android:layout_height="34dp"
-            android:layout_toEndOf="@id/up_button"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="10dp"
             android:cropToPadding="true"
@@ -56,6 +57,7 @@
             android:gravity="center_vertical"
             android:layout_gravity="center_vertical"
             style="@style/TextSecure.TitleTextStyle"
+            tools:text="Contact name"
             tools:ignore="UnusedAttribute"/>
 
         <LinearLayout

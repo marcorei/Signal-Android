@@ -60,6 +60,9 @@ public final class ImageEditorView extends FrameLayout {
   @Nullable
   private DrawingChangedListener drawingChangedListener;
 
+  @Nullable
+  private UndoRedoStackListener undoRedoStackListener;
+
   private final Matrix viewMatrix      = new Matrix();
   private final RectF  viewPort        = Bounds.newFullBounds();
   private final RectF  visibleViewPort = Bounds.newFullBounds();
@@ -70,6 +73,7 @@ public final class ImageEditorView extends FrameLayout {
 
   @Nullable
   private EditSession editSession;
+  private boolean     moreThanOnePointerUsedInSession;
 
   public ImageEditorView(Context context) {
     super(context);
@@ -199,9 +203,11 @@ public final class ImageEditorView extends FrameLayout {
     if (this.model != model) {
       if (this.model != null) {
         this.model.setInvalidate(null);
+        this.model.setUndoRedoStackListener(null);
       }
       this.model = model;
       this.model.setInvalidate(this::invalidate);
+      this.model.setUndoRedoStackListener(this::onUndoRedoAvailabilityChanged);
       this.model.setVisibleViewPort(visibleViewPort);
       invalidate();
     }
@@ -215,6 +221,7 @@ public final class ImageEditorView extends FrameLayout {
         PointF        point    = getPoint(event);
         EditorElement selected = model.findElementAtPoint(point, viewMatrix, inverse);
 
+        moreThanOnePointerUsedInSession = false;
         model.pushUndoPoint();
         editSession = startEdit(inverse, point, selected);
 
@@ -230,9 +237,19 @@ public final class ImageEditorView extends FrameLayout {
       }
       case MotionEvent.ACTION_MOVE: {
         if (editSession != null) {
-          for (int p = 0; p < Math.min(2, event.getPointerCount()); p++) {
+          int historySize  = event.getHistorySize();
+          int pointerCount = Math.min(2, event.getPointerCount());
+
+          for (int h = 0; h < historySize; h++) {
+            for (int p = 0; p < pointerCount; p++) {
+              editSession.movePoint(p, getHistoricalPoint(event, p, h));
+            }
+          }
+
+          for (int p = 0; p < pointerCount; p++) {
             editSession.movePoint(p, getPoint(event, p));
           }
+          model.moving(editSession.getSelected());
           invalidate();
           return true;
         }
@@ -240,11 +257,16 @@ public final class ImageEditorView extends FrameLayout {
       }
       case MotionEvent.ACTION_POINTER_DOWN: {
         if (editSession != null && event.getPointerCount() == 2) {
+          moreThanOnePointerUsedInSession = true;
           editSession.commit();
           model.pushUndoPoint();
 
           Matrix newInverse = model.findElementInverseMatrix(editSession.getSelected(), viewMatrix);
-          editSession = editSession.newPoint(newInverse, getPoint(event, event.getActionIndex()), event.getActionIndex());
+          if (newInverse != null) {
+            editSession = editSession.newPoint(newInverse, getPoint(event, event.getActionIndex()), event.getActionIndex());
+          } else {
+            editSession = null;
+          }
           if (editSession == null) {
             dragDropRelease();
           }
@@ -259,7 +281,11 @@ public final class ImageEditorView extends FrameLayout {
           dragDropRelease();
 
           Matrix newInverse = model.findElementInverseMatrix(editSession.getSelected(), viewMatrix);
-          editSession = editSession.removePoint(newInverse, event.getActionIndex());
+          if (newInverse != null) {
+            editSession = editSession.removePoint(newInverse, event.getActionIndex());
+          } else {
+            editSession = null;
+          }
           return true;
         }
         break;
@@ -270,8 +296,11 @@ public final class ImageEditorView extends FrameLayout {
           dragDropRelease();
 
           editSession = null;
+          model.postEdit(moreThanOnePointerUsedInSession);
           invalidate();
           return true;
+        } else {
+          model.postEdit(moreThanOnePointerUsedInSession);
         }
         break;
       }
@@ -349,12 +378,21 @@ public final class ImageEditorView extends FrameLayout {
     return new PointF(event.getX(p), event.getY(p));
   }
 
+  private static PointF getHistoricalPoint(MotionEvent event, int p, int historicalIndex) {
+    return new PointF(event.getHistoricalX(p, historicalIndex),
+                      event.getHistoricalY(p, historicalIndex));
+  }
+
   public EditorModel getModel() {
     return model;
   }
 
   public void setDrawingChangedListener(@Nullable DrawingChangedListener drawingChangedListener) {
     this.drawingChangedListener = drawingChangedListener;
+  }
+
+  public void setUndoRedoStackListener(@Nullable UndoRedoStackListener undoRedoStackListener) {
+    this.undoRedoStackListener = undoRedoStackListener;
   }
 
   public void setTapListener(TapListener tapListener) {
@@ -366,6 +404,12 @@ public final class ImageEditorView extends FrameLayout {
       model.pushUndoPoint();
       model.delete(editorElement);
       invalidate();
+    }
+  }
+
+  private void onUndoRedoAvailabilityChanged(boolean undoAvailable, boolean redoAvailable) {
+    if (undoRedoStackListener != null) {
+      undoRedoStackListener.onAvailabilityChanged(undoAvailable, redoAvailable);
     }
   }
 

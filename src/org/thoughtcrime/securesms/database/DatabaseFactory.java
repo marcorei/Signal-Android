@@ -58,6 +58,7 @@ public class DatabaseFactory {
   private final SessionDatabase       sessionDatabase;
   private final SearchDatabase        searchDatabase;
   private final JobDatabase           jobDatabase;
+  private final StickerDatabase       stickerDatabase;
 
   public static DatabaseFactory getInstance(Context context) {
     synchronized (lock) {
@@ -140,6 +141,10 @@ public class DatabaseFactory {
     return getInstance(context).jobDatabase;
   }
 
+  public static StickerDatabase getStickerDatabase(Context context) {
+    return getInstance(context).stickerDatabase;
+  }
+
   public static SQLiteDatabase getBackupDatabase(Context context) {
     return getInstance(context).databaseHelper.getReadableDatabase();
   }
@@ -147,6 +152,7 @@ public class DatabaseFactory {
   public static void upgradeRestored(Context context, SQLiteDatabase database){
     getInstance(context).databaseHelper.onUpgrade(database, database.getVersion(), -1);
     getInstance(context).databaseHelper.markCurrent(database);
+    getInstance(context).mms.trimEntriesForExpiredMessages();
   }
 
   private DatabaseFactory(@NonNull Context context) {
@@ -174,6 +180,7 @@ public class DatabaseFactory {
     this.sessionDatabase      = new SessionDatabase(context, databaseHelper);
     this.searchDatabase       = new SearchDatabase(context, databaseHelper);
     this.jobDatabase          = new JobDatabase(context, databaseHelper);
+    this.stickerDatabase      = new StickerDatabase(context, databaseHelper, attachmentSecret);
   }
 
   public void onApplicationLevelUpgrade(@NonNull Context context, @NonNull MasterSecret masterSecret,
@@ -199,5 +206,4 @@ public class DatabaseFactory {
                                                  listener);
     }
   }
-
 }
