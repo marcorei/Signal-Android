@@ -9,14 +9,13 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/conversation_list_toolbar_background"
         android:theme="?attr/actionBarStyle"
         app:contentInsetStartWithNavigation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="?homeAsUpIndicator"
-        tools:background="#ff007f00">
+        tools:background="#fff">
 
         <include layout="@layout/conversation_title_view" />
 
@@ -28,6 +27,7 @@
         android:layout_height="match_parent">
 
         <FrameLayout
+        android:layout_marginTop="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/conversation_background">
@@ -39,8 +39,7 @@
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:gravity="bottom"
-                android:orientation="vertical"
-                android:paddingTop="?attr/actionBarSize">
+                android:orientation="vertical">
 
                 <ViewStub
                     android:id="@+id/group_share_profile_view_stub"
